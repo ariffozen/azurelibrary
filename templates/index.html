@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure DevOps Variable Group Güncelleme</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #38bdf8;
+            --accent-soft: rgba(56, 189, 248, 0.12);
+            --bg-deep: #0f172a;
+            --bg-card: #ffffff;
+        }
+
+        body.app-body {
+            min-height: 100vh;
+            background: radial-gradient(120% 120% at 0% 0%, rgba(56, 189, 248, 0.35) 0%, rgba(29, 78, 216, 0.18) 35%, rgba(14, 116, 144, 0.08) 65%, var(--bg-deep) 100%);
+            display: flex;
+            align-items: center;
+            padding: 3rem 0;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .shape-blur {
+            position: fixed;
+            width: 340px;
+            height: 340px;
+            border-radius: 50%;
+            filter: blur(130px);
+            z-index: 0;
+            opacity: 0.8;
+        }
+
+        .shape-blur.one {
+            top: -120px;
+            right: -120px;
+            background: rgba(56, 189, 248, 0.4);
+        }
+
+        .shape-blur.two {
+            bottom: -140px;
+            left: -60px;
+            background: rgba(59, 130, 246, 0.35);
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+
+        .app-card {
+            backdrop-filter: blur(12px);
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.88), rgba(17, 24, 39, 0.92));
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            border-radius: 1.5rem;
+            box-shadow: 0 30px 45px -35px rgba(15, 23, 42, 0.9);
+        }
+
+        .app-card .card-body {
+            padding: 2.75rem;
+        }
+
+        .headline-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 0.9rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            background: rgba(148, 163, 184, 0.14);
+            color: #e2e8f0;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .app-card h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        .app-card p.lead-text {
+            color: #cbd5f5;
+        }
+
+        label.form-label {
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+
+        .form-control,
+        .form-control:focus,
+        textarea.form-control,
+        .form-select {
+            background-color: rgba(15, 23, 42, 0.65);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            color: #f8fafc;
+            box-shadow: none;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 0.2rem rgba(56, 189, 248, 0.15);
+        }
+
+        textarea.form-control {
+            font-family: "Roboto Mono", "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            resize: vertical;
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, var(--accent), #2563eb);
+            border: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 30px -22px rgba(56, 189, 248, 0.9);
+        }
+
+        .submit-button:focus-visible {
+            outline: 2px solid rgba(56, 189, 248, 0.6);
+            outline-offset: 4px;
+        }
+
+        .response-wrapper {
+            border-radius: 1.1rem;
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        pre#response {
+            background: transparent;
+            color: #e2e8f0;
+            margin: 0;
+            font-size: 0.92rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            min-height: 140px;
+        }
+
+        .info-badge {
+            color: #bae6fd;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 992px) {
+            .app-card .card-body {
+                padding: 2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            body.app-body {
+                padding: 2rem 0;
+            }
+
+            .app-card .card-body {
+                padding: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body class="app-body">
+    <span class="shape-blur one"></span>
+    <span class="shape-blur two"></span>
+
+    <div class="container content-wrapper">
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-9">
+                <div class="app-card card">
+                    <div class="card-body">
+                        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-between align-items-sm-center mb-3">
+                            <span class="headline-badge">
+                                Azure DevOps
+                            </span>
+                            <span class="info-badge">
+                                Değerlerinizi güvenli biçimde güncelleyin
+                            </span>
+                        </div>
+
+                        <h1 class="mb-3">Variable Group Güncelleme Aracı</h1>
+                        <p class="lead-text mb-4">
+                            Formu doldurarak seçtiğiniz variable group içerisindeki yapılandırma değerlerini appsettings.json verisiyle eşitleyin.
+                        </p>
+
+                        <form id="variableGroupForm" class="needs-validation" novalidate>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label for="azureHost" class="form-label">Azure Host Adresi</label>
+                                    <input type="text" class="form-control" id="azureHost" placeholder="Örn: https://dev.azure.com" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="azureOrg" class="form-label">Azure Organizasyonu</label>
+                                    <input type="text" class="form-control" id="azureOrg" placeholder="Örn: organizasyon adınız" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="projectName" class="form-label">Azure Project Adı</label>
+                                    <select class="form-select" id="projectName" required>
+                                        <option value="" selected disabled>Proje seçin</option>
+                                        <option value="Project1">Project1</option>
+										<option value="Project2">Project2</option>
+										<option value="Project3">Project3</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="azurePat" class="form-label">Azure Personal Access Token (PAT)</label>
+                                    <input type="password" class="form-control" id="azurePat" placeholder="PAT değerini girin" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="variableGroupName" class="form-label">Variable Group Adı</label>
+                                    <input type="text" class="form-control" id="variableGroupName" placeholder="Variable group adını girin" required>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="jsonData" class="form-label">appsettings.json İçeriği</label>
+                                    <textarea class="form-control" id="jsonData" rows="8" placeholder="JSON verisini buraya yapıştırın..." required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-3 mt-4">
+                                <button type="button" id="submitButton" class="btn btn-lg btn-primary submit-button px-4" onclick="sendRequest()">
+                                    Gönder
+                                </button>
+                                <small class="text-secondary">
+                                    Gönderim sırasında tarayıcı kapanmadan bekleyin.
+                                </small>
+                            </div>
+                        </form>
+
+                        <div id="alertArea" class="mt-4" style="display: none;"></div>
+
+                        <div class="response-wrapper mt-4">
+                            <div class="p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="text-light mb-0">Sonuç</h5>
+                                    <span class="badge bg-primary bg-opacity-25 text-info">JSON Yanıtı</span>
+                                </div>
+                                <pre id="response"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById("variableGroupForm");
+        const responseBlock = document.getElementById("response");
+        const submitButton = document.getElementById("submitButton");
+        const alertArea = document.getElementById("alertArea");
+
+        function showAlert(message, type = "danger") {
+            alertArea.style.display = "block";
+            alertArea.innerHTML = `
+                <div class="alert alert-${type} mb-0" role="alert">
+                    ${message}
+                </div>
+            `;
+        }
+
+        function clearAlert() {
+            alertArea.style.display = "none";
+            alertArea.innerHTML = "";
+        }
+
+        function toggleButton(loading) {
+            if (loading) {
+                submitButton.disabled = true;
+                submitButton.innerHTML = `
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Gönderiliyor...
+                `;
+            } else {
+                submitButton.disabled = false;
+                submitButton.textContent = "Gönder";
+            }
+        }
+
+        function sendRequest() {
+            clearAlert();
+            if (!form.checkValidity()) {
+                form.classList.add("was-validated");
+                showAlert("Lütfen tüm alanları eksiksiz doldurun.");
+                return;
+            }
+
+            const azureHost = document.getElementById("azureHost").value.trim();
+            const azureOrg = document.getElementById("azureOrg").value.trim();
+            const azurePat = document.getElementById("azurePat").value.trim();
+            const projectName = document.getElementById("projectName").value.trim();
+            const variableGroupName = document.getElementById("variableGroupName").value.trim();
+            const jsonDataRaw = document.getElementById("jsonData").value.trim();
+
+            let jsonData;
+            try {
+                jsonData = JSON.parse(jsonDataRaw);
+            } catch (error) {
+                showAlert("Geçerli bir JSON girin.");
+                return;
+            }
+
+            toggleButton(true);
+            responseBlock.textContent = "";
+
+            fetch("/update-variable-group", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    azureHost: azureHost,
+                    azureOrg: azureOrg,
+                    azurePat: azurePat,
+                    projectName: projectName,
+                    variableGroupName: variableGroupName,
+                    jsonData: jsonData
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Sunucu ${response.status} yanıtı döndürdü.`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                responseBlock.textContent = JSON.stringify(data, null, 4);
+                showAlert("İstek başarıyla tamamlandı.", "success");
+            })
+            .catch(error => {
+                responseBlock.textContent = "";
+                showAlert(`Gönderim sırasında bir hata oluştu: ${error.message}`);
+            })
+            .finally(() => {
+                toggleButton(false);
+            });
+        }
+    </script>
+</body>
+</html>
